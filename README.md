@@ -10,7 +10,7 @@ MCP-сервер для **GitLab** и **Jira Server / Data Center**.
 | `Version3Client` (Cloud API v3) ломается on-prem | **`Version2Client`** (REST API v2) |
 | Agile-запросы тоже шли через Basic | Bearer |
 
-Подходит для внутренних инстансов вроде `https://jira.phoenixit.ru` + self-hosted GitLab.
+Подходит для внутренних инстансов вроде `https://jira.example.com` + self-hosted GitLab.
 
 ## Требования
 
@@ -32,7 +32,7 @@ curl -sS -o /dev/null -w "%{http_code}\n" \
 
 ## Установка
 
-### Вариант A — из git (рекомендуется для команды)
+### Вариант A — из git
 
 ```bash
 npm i -g git+ssh://git@YOUR_GITHOST/YOUR_GROUP/mcp-gitlab-jira-onprem.git
@@ -73,9 +73,9 @@ npm run build
 Положите их в `~/.zshrc` / `~/.bashrc` **и** перезапустите Cursor из окружения, где они видны:
 
 ```bash
-export GITLAB_URL="https://gitlab.akb-it.ru"
+export GITLAB_URL="https://gitlab.example.com"
 export GITLAB_ACCESS_TOKEN="glpat-…"
-export ATLASSIAN_SITE_NAME="https://jira.phoenixit.ru"
+export ATLASSIAN_SITE_NAME="https://jira.example.com"
 export ATLASSIAN_API_TOKEN="ваш-pat"
 ```
 
@@ -90,9 +90,9 @@ export ATLASSIAN_API_TOKEN="ваш-pat"
       "command": "mcp-gitlab-jira-onprem",
       "args": [],
       "env": {
-        "GITLAB_URL": "https://gitlab.akb-it.ru",
+        "GITLAB_URL": "https://gitlab.example.com",
         "GITLAB_ACCESS_TOKEN": "REPLACE_ME",
-        "ATLASSIAN_SITE_NAME": "https://jira.phoenixit.ru",
+        "ATLASSIAN_SITE_NAME": "https://jira.example.com",
         "ATLASSIAN_API_TOKEN": "REPLACE_ME"
       }
     }
@@ -109,9 +109,9 @@ export ATLASSIAN_API_TOKEN="ваш-pat"
       "command": "node",
       "args": ["/home/YOU/tools/mcp-gitlab-jira-onprem/dist/index.js"],
       "env": {
-        "GITLAB_URL": "https://gitlab.akb-it.ru",
+        "GITLAB_URL": "https://gitlab.example.com",
         "GITLAB_ACCESS_TOKEN": "REPLACE_ME",
-        "ATLASSIAN_SITE_NAME": "https://jira.phoenixit.ru",
+        "ATLASSIAN_SITE_NAME": "https://jira.example.com",
         "ATLASSIAN_API_TOKEN": "REPLACE_ME"
       }
     }
