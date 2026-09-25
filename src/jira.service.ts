@@ -936,36 +936,28 @@ export class JiraService {
 
   /**
    * Creates a new Jira ticket using the provided parameters.
-   * @param params The createIssue parameters for Jira API.
+   * @param params Either `{ fields: {...} }` or the fields object itself
+   *   (as passed by `jira_create_ticket` MCP tool args).
+   * @returns Created issue key/id/self for the caller.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async createTicket(params: any): Promise<void> {
+  async createTicket(params: any): Promise<{ id: string; key: string; self: string }> {
     try {
-      if (params.fields) {
-        // Jira's description field expects Atlassian Document Format (ADF).
-        // If a plain string is provided, or if it's missing, convert it to the ADF structure.
-        if (
-          typeof params.fields.description === 'string' ||
-          !params.fields.description
-        ) {
-          const descriptionText =
-            params.fields.description ||
-            params.fields.summary ||
-            'not provided by agent';
-          params.fields.description = {
-            type: 'doc',
-            version: 1,
-            content: [
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: descriptionText }],
-              },
-            ],
-          };
-        }
+      // MCP tool passes the fields object directly; jira.js expects { fields }.
+      const fields = params?.fields ?? params;
+      if (!fields || typeof fields !== 'object') {
+        throw new Error('createTicket requires a fields object');
       }
-      await this.client.issues.createIssue(params);
-      console.error('Jira ticket created successfully.');
+
+      // NOTE: Jira Server/DC accepts wiki markup / plain strings for description.
+      // Do NOT convert to ADF — that is Cloud-only and causes HTTP 500 on-prem.
+      const result = await this.client.issues.createIssue({ fields });
+      console.error(`Jira ticket created successfully: ${result.key}`);
+      return {
+        id: String(result.id),
+        key: String(result.key),
+        self: String(result.self),
+      };
     } catch (error) {
       console.error('Error creating Jira ticket:', error);
       throw error;

@@ -1552,12 +1552,14 @@ server.setRequestHandler(
                 throw new Error('Jira service is not initialized.');
             }
             const { fields } = args as { fields: any };
-            await jiraService.createTicket(fields);
+            const created = await jiraService.createTicket(fields);
+            const baseUrl = (process.env.ATLASSIAN_SITE_NAME || '').replace(/\/$/, '');
+            const browseUrl = baseUrl ? `${baseUrl}/browse/${created.key}` : created.key;
             return {
                 content: [
                     {
                         type: 'text',
-                        text: 'Jira ticket created successfully.',
+                        text: JSON.stringify({ ...created, url: browseUrl }, null, 2),
                     },
                 ],
             };
