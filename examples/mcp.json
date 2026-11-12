@@ -1,7 +1,7 @@
 {
   "mcpServers": {
-    "gitlab-jira-mcp": {
-      "command": "mcp-gitlab-jira-onprem",
+    "gitlab-jira-conf": {
+      "command": "mcp-gitlab-jira-conf-onprem",
       "args": [],
       "env": {
         "GITLAB_URL": "https://gitlab.example.com",

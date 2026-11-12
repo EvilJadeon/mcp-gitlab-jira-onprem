@@ -1,11 +1,11 @@
 {
-  "name": "mcp-gitlab-jira-onprem",
+  "name": "mcp-gitlab-jira-conf-onprem",
   "version": "0.3.0",
   "type": "module",
   "description": "MCP server for GitLab + Jira and Confluence Server/Data Center (Bearer PAT). Fork of mcp-gitlab-jira.",
   "main": "dist/index.js",
   "bin": {
-    "mcp-gitlab-jira-onprem": "dist/index.js"
+    "mcp-gitlab-jira-conf-onprem": "dist/index.js"
   },
   "files": [
     "dist",

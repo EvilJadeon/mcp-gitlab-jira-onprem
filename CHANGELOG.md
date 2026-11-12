@@ -16,6 +16,8 @@
 
 ### Changed
 
+- Package / binary renamed to `mcp-gitlab-jira-conf-onprem` (was `mcp-gitlab-jira-onprem`), so it can be
+  installed alongside the previous fork. Re-run `./install.sh` and update `command` in the MCP client config.
 - `gitlab_get_merge_request_details` returns each file diff once (`files[]`), with old/new
   line numbers per line, instead of `fileDiffs` + `diffForPrompt` + `parsedDiffs`
   (~5× smaller). Removed always-empty `discussions`, `existingFeedback`, `fileContents`.

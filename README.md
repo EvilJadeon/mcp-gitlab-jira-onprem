@@ -9,9 +9,16 @@ MCP-сервер для GitLab, Jira Server/DC и Confluence Server/DC.
 ```bash
 git clone https://github.com/viktorov616/mcp-gitlab-jira-conf-onprem.git ~/tools/mcp-gitlab-jira-conf-onprem
 cd ~/tools/mcp-gitlab-jira-conf-onprem
-npm install
-npm run build
+./install.sh
 ```
+
+Скрипт выполнит `npm install`, `npm run build` и создаст команду `~/.local/bin/mcp-gitlab-jira-conf-onprem`. Проверьте, что `~/.local/bin` есть в `PATH`:
+
+```bash
+which mcp-gitlab-jira-conf-onprem
+```
+
+Если пусто — добавьте в `~/.bashrc` (или `~/.zshrc`) строку `export PATH="$HOME/.local/bin:$PATH"`.
 
 ## 2. Токены
 
@@ -42,6 +49,31 @@ npm run build
 
 ## 4. Подключение
 
+Во всех клиентах сервер запускается командой `mcp-gitlab-jira-conf-onprem`. Если клиент её не находит (GUI-приложения часто не видят `~/.local/bin`), укажите абсолютный путь — `/home/YOU/.local/bin/mcp-gitlab-jira-conf-onprem`.
+
+### opencode — `~/.config/opencode/opencode.json`
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "gitlab-jira-conf": {
+      "type": "local",
+      "command": ["mcp-gitlab-jira-conf-onprem"],
+      "enabled": true,
+      "environment": {
+        "GITLAB_URL": "https://gitlab.example.com",
+        "GITLAB_ACCESS_TOKEN": "REPLACE_ME",
+        "ATLASSIAN_SITE_NAME": "https://jira.example.com",
+        "ATLASSIAN_API_TOKEN": "REPLACE_ME",
+        "CONFLUENCE_URL": "https://wiki.example.com",
+        "CONFLUENCE_API_TOKEN": "REPLACE_ME"
+      }
+    }
+  }
+}
+```
+
 ### Claude Code
 
 ```bash
@@ -52,7 +84,7 @@ claude mcp add gitlab-jira-conf \
   -e ATLASSIAN_API_TOKEN=REPLACE_ME \
   -e CONFLUENCE_URL=https://wiki.example.com \
   -e CONFLUENCE_API_TOKEN=REPLACE_ME \
-  -- node ~/tools/mcp-gitlab-jira-conf-onprem/dist/index.js
+  -- mcp-gitlab-jira-conf-onprem
 ```
 
 ### Cursor — `~/.cursor/mcp.json`
@@ -61,8 +93,8 @@ claude mcp add gitlab-jira-conf \
 {
   "mcpServers": {
     "gitlab-jira-conf": {
-      "command": "node",
-      "args": ["/home/YOU/tools/mcp-gitlab-jira-conf-onprem/dist/index.js"],
+      "command": "mcp-gitlab-jira-conf-onprem",
+      "args": [],
       "env": {
         "GITLAB_URL": "https://gitlab.example.com",
         "GITLAB_ACCESS_TOKEN": "REPLACE_ME",
@@ -78,6 +110,10 @@ claude mcp add gitlab-jira-conf \
 
 После изменения конфига полностью перезапустите Cursor — Reload Window часто оставляет старый процесс.
 
+### Переход с `mcp-gitlab-jira-onprem`
+
+Если раньше подключали старый форк командой `mcp-gitlab-jira-onprem`, замените её в конфиге на `mcp-gitlab-jira-conf-onprem` и добавьте переменные `CONFLUENCE_*`. Старую команду можно удалить: `rm ~/.local/bin/mcp-gitlab-jira-onprem`.
+
 ## 5. Использование
 
 Попросите агента, например: «Возьми задачу PROJ-123 вместе с описанием из Confluence». Инструмент `jira_get_ticket_with_confluence_pages` вернёт тикет и текст всех связанных страниц — из блока «Confluence pages» и из ссылок в описании.
@@ -87,8 +123,7 @@ claude mcp add gitlab-jira-conf \
 ```bash
 cd ~/tools/mcp-gitlab-jira-conf-onprem
 git pull
-npm install
-npm run build
+./install.sh
 ```
 
 Затем перезапустите MCP-клиент.
@@ -97,4 +132,5 @@ npm run build
 
 - `curl` из раздела 2 должен возвращать `200` в том же окружении, где запущен клиент.
 - Сервисы доступны только из корпоративной сети — при split-tunnel VPN добавьте их домены в direct/bypass.
+- `command not found` / сервер не стартует — проверьте `which mcp-gitlab-jira-conf-onprem` или укажите в конфиге абсолютный путь.
 - Логи сервера пишутся в stderr: при старте видно, какие сервисы инициализированы.
